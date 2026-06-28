@@ -7,7 +7,7 @@ import { Button } from './components/ui/button';
 
 function GreetingContent() {
   const { data } = useSuspenseQuery(trpc.greeting.queryOptions({ name: 'tRPC user' }));
-  return <div>{data?.text}</div>;
+  return <div>{data.text}</div>;
 }
 
 function GreetingFallback() {

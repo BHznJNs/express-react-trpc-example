@@ -1,10 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import { trpc } from './utils/trpc';
+import { useEffect, useState } from 'react';
 
 export function Greeting() {
-  const { data, isLoading, error} = useQuery(trpc.greeting.queryOptions({ name: 'tRPC user' }));
-
-  if (isLoading) {
+  const [content, setContent] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    fetch(`http://localhost:2022/trpc/greeting?input={"0":{"name":"tRPC user"}}`)
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
+      .then(d => setContent(d.content))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  })
+  if (loading) {
     return "Loading...";
   }
 
@@ -12,5 +20,5 @@ export function Greeting() {
     return "Error: " + JSON.stringify(error);
   }
 
-  return <div>{data?.text}</div>;
+  return <div>{content}</div>;
 }

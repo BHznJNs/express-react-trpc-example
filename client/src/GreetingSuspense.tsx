@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { QueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -32,10 +32,14 @@ function GreetingErrorFallback({ error, resetErrorBoundary }: {
 
 export function GreetingSuspense() {
   return (
-    <ErrorBoundary FallbackComponent={GreetingErrorFallback}>
-      <Suspense fallback={<GreetingFallback />}>
-        <GreetingContent />
-      </Suspense>
-    </ErrorBoundary>
+    <QueryErrorResetBoundary>
+      {({reset}) => (
+        <ErrorBoundary onReset={reset} FallbackComponent={GreetingErrorFallback}>
+          <Suspense fallback={<GreetingFallback />}>
+            <GreetingContent />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   );
 }

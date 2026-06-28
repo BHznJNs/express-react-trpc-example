@@ -1,10 +1,5 @@
-import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
-
-const t = initTRPC.create();
-
-const publicProcedure = t.procedure;
-const router = t.router;
+import { publicProcedure, router } from './trpc';
 
 export const appRouter = router({
   greeting: publicProcedure
@@ -15,10 +10,21 @@ export const appRouter = router({
         })
         .nullish(),
     )
+    .output(
+      z.
+        object({
+          text: z.string()
+        })
+    )
     .query(({ input }) => {
-      return {
-        text: `hello ${input?.name ?? 'world'}`,
-      };
+      return new Promise((res, rej) => {
+        // rej(new Error("example error"))
+        setTimeout(() => {
+          res({
+            text: `hello ${input?.name ?? 'world'}`,
+          })
+        }, 5000)
+      })
     }),
 });
 
